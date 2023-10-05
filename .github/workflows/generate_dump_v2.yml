@@ -34,7 +34,7 @@ jobs:
         id: copyv1dump
         run: |
           cd ./curation_ops/v2_crosswalk
-          cp -R ./ror-data/${{github.event.inputs.v1-dump}}.zip ./curation_ops/v2-crosswalk/V1_INPUT
+          cp -R ../ror-data/${{github.event.inputs.v1-dump}}.zip ./curation_ops/v2-crosswalk/V1_INPUT
       - name: Set up Python environment
         uses: actions/setup-python@v2
         with:

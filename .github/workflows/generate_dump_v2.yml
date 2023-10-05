@@ -5,6 +5,9 @@ on:
       v1-dump:
         type: string
         description: Name of the v1 dump zip file to convert to v2 (without zip extension)
+      dates-file:
+        type: string
+        description: Name of dates CSV file to use in dump generation (without csv exension, place in curation_ops/created_last_modified)
 
 jobs:
   generate-dump:
@@ -37,7 +40,6 @@ jobs:
           mkdir ./curation_ops/v2_crosswalk/V1_INPUT
           mkdir ./curation_ops/v2_crosswalk/V2_OUTPUT
           cp -R ./ror-data/${{github.event.inputs.v1-dump}}.zip ./curation_ops/v2_crosswalk/V1_INPUT
-          cd ./curation_ops/v2_crosswalk
       - name: Set up Python environment
         uses: actions/setup-python@v2
         with:
@@ -45,7 +47,8 @@ jobs:
       - name: execute script
         id: gendumpscript
         run: |
-          python convert_v1_to_v2.py -d ./V1_INPUT/${{github.event.inputs.v1-dump}}.zip
+          cd ./curation_ops/v2_crosswalk
+          python convert_v1_to_v2.py -f ./V1_INPUT/${{github.event.inputs.v1-dump}}.zip -d ../created_last_modified/${{github.event.inputs.dates-file}}.csv
       - name: cat error file
         if: ${{ steps.gendumpscript.outcome != 'success'}}
         run: |

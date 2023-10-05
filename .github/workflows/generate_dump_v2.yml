@@ -57,7 +57,7 @@ jobs:
       - name: copy new data dump file
         id: copynewdump
         run: |
-          yes | cp -rf ./curation_ops/V1_INPUT/${{github.event.inputs.v1-dump}}.zip ./ror-data-test
+          yes | cp -rf ./curation_ops/v2_crosswalk/V1_INPUT/${{github.event.inputs.v1-dump}}.zip ./ror-data-test
       - name: commit dump file
         id: commitdumpfile
         if: ${{ steps.copynewdump.outcome == 'success'}}

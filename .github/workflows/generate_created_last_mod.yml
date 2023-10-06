@@ -1,0 +1,52 @@
+name: Generate created last mod dates file
+on: workflow_dispatch
+
+jobs:
+  generate-dates-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout ror data repo
+        uses: actions/checkout@v2
+        with:
+          repository: ror-community/ror-data
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          path: ./ror-data
+      - name: checkout ror curation ops repo
+        uses: actions/checkout@v2
+        with:
+          repository: ror-community/curation_ops
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          path: ./curation_ops
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: execute script
+        id: gendatesfilescript
+        run: |
+          cd ./curation_ops/created_last_modified
+          python created_last_modified.py -d ../../ror-data
+      - name: copy new data dump file
+        if: ${{ steps.gendumpscript.outcome == 'success'}}
+        id: copynewdump
+        run: |
+          yes | cp -rf ./curation_ops/v2_crosswalkV1_INPUT/${{github.event.inputs.v1-dump}}.zip ./ror-data-test
+      - name: commit dates file
+        id: commitdatesfile
+        if: ${{ steps.gendatesfilescript.outcome == 'success'}}
+        run: |
+          cd ./curation_ops
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add *created_last_mod.csv
+          git commit -m "add new created last modified dates file"
+          git push origin main
+      - name: Notify Slack
+        if: always()
+        uses: edge/simple-slack-notify@master
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.CURATOR_SLACK_WEBHOOK_URL }}
+        with:
+          channel: '#ror-curation-releases'
+          color: 'good'
+          text: 'DEV created last mod dates file generation status:  ${{ steps.commitdumpfile.outcome }} Please check: ${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}'

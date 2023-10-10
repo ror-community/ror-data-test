@@ -26,11 +26,6 @@ jobs:
         run: |
           cd ./curation_ops/created_last_modified
           python created_last_modified.py -d ../../ror-data
-      - name: copy new data dump file
-        if: ${{ steps.gendumpscript.outcome == 'success'}}
-        id: copynewdump
-        run: |
-          yes | cp -rf ./curation_ops/v2_crosswalkV1_INPUT/${{github.event.inputs.v1-dump}}.zip ./ror-data-test
       - name: commit dates file
         id: commitdatesfile
         if: ${{ steps.gendatesfilescript.outcome == 'success'}}

@@ -27,7 +27,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: ror-community/curation_ops
-          ref: v2-crosswalk
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           path: ./curation_ops
       - name: copy v1 dump file

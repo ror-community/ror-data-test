@@ -43,7 +43,7 @@ jobs:
         id: gendumpscript
         run: |
           cd ./curation_ops/v2_crosswalk
-          python convert_v1_to_v2.py -f ./V1_INPUT/${{github.event.inputs.v1-dump}}.zip -d ../created_last_modified/${{github.event.inputs.v1-dump}}_created_last_mod.csv
+          python crosswalk.py -i ./V1_INPUT/ -o ./V2_OUTPUT/ -v 2 -f ./V1_INPUT/${{github.event.inputs.v1-dump}}.zip -d ../created_last_modified/${{github.event.inputs.v1-dump}}_created_last_mod.csv
       - name: cat error file
         if: ${{ steps.gendumpscript.outcome != 'success'}}
         run: |
